@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const app = express();
-const port = 8085;
+const port = process.env.PORT || 5000
 
 const { SendRabbitMq, getProductsES } = require("./es")
 var amqp = require('amqplib/callback_api');

@@ -2,9 +2,9 @@
   "name": "ondc-protocol-api-for-retail-grocery-f-b",
   "version": "1.0.22",
   "description": "ONDC Protocol API specification, which includes statutory requirements for packaged commodities and pre-packaged food This is an adaptation of Beckn Core version 0.9.3",
-  "main": "index.js",
+  "main": "./index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node ./index.js"
   },
   "keywords": [
     "swagger"
