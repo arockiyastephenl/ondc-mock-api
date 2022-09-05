@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT || 5000
 
-const { SendRabbitMq, getProductsES } = require("./Es")
+const { SendRabbitMq } = require("./utiles/Es")
 var amqp = require('amqplib/callback_api');
 const fetch = require("node-fetch");
 var axios = require('axios');
