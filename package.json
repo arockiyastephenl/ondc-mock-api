@@ -1,16 +1,14 @@
 {
-  "name": "ondc-protocol-api-for-retail-grocery-f-b",
-  "version": "1.0.22",
-  "description": "ONDC Protocol API specification, which includes statutory requirements for packaged commodities and pre-packaged food This is an adaptation of Beckn Core version 0.9.3",
+  "name": "herokudeploy",
+  "version": "1.0.0",
+  "description": "",
   "main": "./index.js",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node .index.js"
   },
-  "keywords": [
-    "swagger"
-  ],
-  "license": "Unlicense",
-  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "amqplib": "^0.10.2",
     "axios": "^0.27.2",
@@ -21,8 +19,5 @@
     "js-yaml": "^3.3.0",
     "node-fetch": "^2.6.1",
     "oas3-tools": "^2.2.3"
-  },
-  "engines": {
-    "node":"v16.16.0"
   }
 }
