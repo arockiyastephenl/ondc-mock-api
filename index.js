@@ -5,7 +5,7 @@ const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT || 5000
-
+var request = require('request');
 const { SendRabbitMq } = require("./utiles/Es")
 var amqp = require('amqplib/callback_api');
 const fetch = require("node-fetch");
@@ -74,7 +74,7 @@ let resPayload = {
     "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
     "transaction_id": "",
     "message_id": "",
-    "timestamp": ""
+    "timestamp": datetime
   },
   "message": {
 
@@ -96,6 +96,7 @@ var aa = {
 }
 
 var selectedData = []
+var selectedDataObj = {}
 
 app.get('/', (req, res) => res.send({
   "App": "Mock API for ONDC",
@@ -105,36 +106,9 @@ app.get('/', (req, res) => res.send({
 app.post("/search", async (req, res) => {
   try {
 
-    //     aa={
-    //       "platform": [],
-    //       "brand": [],
-    //       "categories": [],
-    //       "style": [],
-    //       "color": [],
-    //       "gender": [],
-    //       "froms": 0,
-    //       "productUrl": "",
-    //       "sort": "",
-    //       "search": "",
-    //       "location": "IN",
-    //       "measurementsUnit": "CM"
-    //   }
-    //     axios.post('https://testnodeelastic.herokuapp.com/getSearchResult',aa, config)
-    // .then(function(response) {
-    //     console.log(response.data);
-    //     // console.log(response.status);
-    //     // console.log(response.statusText);
-    //     // console.log(response.headers);
-    //     // console.log(response.config);
-    //     res.send(response.data)
-
-    // });
-
-
-
-
     let data = SendRabbitMq({ data: req.body })
 
+    selectedDataObj = req.body
 
     const p = Promise.resolve(data);
 
@@ -162,6 +136,15 @@ app.get("/on_search", async (req, res) => {
     resPayload.context.message_id = Received_msg_id
     resPayload.context.transaction_id = Received_msg_id
     resPayload.context.timestamp = datetime
+
+    console.log("selectedDataObj",selectedDataObj)
+
+    aa.search =selectedDataObj.message.criteria.search_string
+
+    console.log("aa",aa)
+
+
+    try{
     axios.post('https://testnodeelastic.herokuapp.com/getSearchResult', aa, config)
       .then(function (response) {
         products = response.data.products
@@ -233,6 +216,12 @@ app.get("/on_search", async (req, res) => {
         // console.log("resPayload",resPayload)
         res.send(resPayload)
       });
+    }catch(err){
+      res.status(400).json({
+        error: true,
+        message: err,
+      });
+    }
   } catch (err) {
     console.log(err);
     res.status(400).json({
@@ -360,8 +349,184 @@ app.get("/on_select", async (req, res) => {
   // quote.quote = finalObj
   quote.quote.price = totalPrice
   quote.quote.breakup = finalObj
-  res.send(quote);
+  resPayload.message.quote = quote
+
+  res.send(resPayload);
 })
+
+app.post("/init", async (req,res)=>{
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = req.body
+
+    p.then(value => {
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_init", async (req,res)=>{
+  try {
+  //   console.log("====>")
+  //   request.post(
+  //     'https://testnodeelastic.herokuapp.com/getSearchResult',
+  //     aa,
+  //     function (error, response, body) {
+  //         if (!error && response.statusCode == 200) {
+  //             console.log(body);
+  //         }
+  //     }
+  // );
+
+  resPayload.context.message_id = Received_msg_id
+  resPayload.context.transaction_id = Received_msg_id
+
+  
+    orderDetails = {
+      "provider":{
+        "id":Math.floor(Math.random() * 899999999 + 100000000),
+        "locations":[
+           {
+              "id":Math.floor(Math.random() * 899999999 + 100000000)
+           }
+        ]
+     },
+      "items":[],
+      "billing":{},
+      "fulfillments":[],
+      "quote":{},
+      "payment":{}
+   }
+   for (var key in selectedData) {
+    var obj = selectedData[key];
+
+    console.log("ssssdfsdsads",obj)
+    // res.send(obj);
+    orderDetails.items = obj.message.items
+    orderDetails.billing = obj.message.billing_info
+    orderDetails.payment = obj.message.payment
+
+  }
+  resPayload.message.order = orderDetails
+
+
+   res.send(resPayload);
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/billing_address",async (req,res)=>{
+  try{
+
+    var billing_address = [
+      {
+          "_id": "6316c481a300896b927a3922",
+          "userId": "3E4SH92EURhowc1GN181RK9HCWi2",
+          "id": "ac858fed-85a0-4808-89c8-892f2e87a514",
+          "descriptor": {
+              "name": "dummy name",
+              "phone": "123456789",
+              "email": "dummy@gmail.com",
+              "code": null,
+              "symbol": null,
+              "shortDesc": null,
+              "longDesc": null,
+              "images": [],
+              "audio": null,
+              "3d_render": null
+          },
+          "gps": null,
+          "defaultAddress": true,
+          "address": {
+              "door": "xxx",
+              "name": null,
+              "building": "xxx",
+              "street": "dummy street",
+              "locality": null,
+              "ward": null,
+              "city": "chennai District",
+              "state": "Tamil Nadu",
+              "country": "IND",
+              "areaCode": "600000"
+          },
+          "createdAt": datetime,
+          "updatedAt": datetime,
+          "__v": 0
+      }
+  ]
+    res.send(billing_address)
+  }catch(err){
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+app.get("/delivey_address",async (req,res)=>{
+  try{
+
+    var billing_address = [
+      {
+          "_id": "6316c481a300896b927a3922",
+          "userId": "3E4SH92EURhowc1GN181RK9HCWi2",
+          "id": "ac858fed-85a0-4808-89c8-892f2e87a514",
+          "descriptor": {
+              "name": "dummy name",
+              "phone": "123456789",
+              "email": "dummy@gmail.com",
+              "code": null,
+              "symbol": null,
+              "shortDesc": null,
+              "longDesc": null,
+              "images": [],
+              "audio": null,
+              "3d_render": null
+          },
+          "gps": null,
+          "defaultAddress": true,
+          "address": {
+              "door": "xxx",
+              "name": null,
+              "building": "xxx",
+              "street": "dummy street",
+              "locality": null,
+              "ward": null,
+              "city": "chennai District",
+              "state": "Tamil Nadu",
+              "country": "IND",
+              "areaCode": "600000"
+          },
+          "createdAt": datetime,
+          "updatedAt": datetime,
+          "__v": 0
+      }
+  ]
+    res.send(billing_address)
+  }catch(err){
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
 
 
 app.listen(process.env.PORT || port, () => console.log(`Example app listening at http://localhost:${port}`));
