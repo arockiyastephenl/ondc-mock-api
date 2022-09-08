@@ -10,7 +10,8 @@ const { SendRabbitMq } = require("./utiles/Es")
 var amqp = require('amqplib/callback_api');
 const fetch = require("node-fetch");
 var axios = require('axios');
-
+const http = require('http');
+const url = require('url');
 var config = {
   /* Your settings here like Accept / Headers etc. */
 }
@@ -97,7 +98,17 @@ var aa = {
 
 var selectedData = []
 var selectedDataObj = {}
-
+function generateGuid() {
+  var result, i, j;
+  result = '';
+  for (j = 0; j < 32; j++) {
+      if (j == 8 || j == 12 || j == 16 || j == 20)
+          result = result + '-';
+      i = Math.floor(Math.random() * 16).toString(16).toUpperCase();
+      result = result + i;
+  }
+  return result;
+}
 app.get('/', (req, res) => res.send({
   "App": "Mock API for ONDC",
   "Seller": "sizeguarantee.com",
@@ -114,6 +125,8 @@ app.post("/search", async (req, res) => {
 
     p.then(value => {
       // console.log("value",value); // 👉️ "hello"
+      Received_msg_id = value.context.transaction_id
+      value.context.action = "search"
       res.send(value)
     }).catch(err => {
       console.log(err);
@@ -132,18 +145,19 @@ app.post("/search", async (req, res) => {
 
 app.get("/on_search", async (req, res) => {
   try {
-    let msg_id = Received_msg_id
-    resPayload.context.message_id = Received_msg_id
+
+    
+    const queryObject = url.parse(req.url, true).query;
+    console.log("queryObject",queryObject);
+    
+
+    resPayload.context.message_id = queryObject.messageId
     resPayload.context.transaction_id = Received_msg_id
     resPayload.context.timestamp = datetime
 
-    console.log("selectedDataObj",selectedDataObj)
 
     aa.search =selectedDataObj.message.criteria.search_string
-
-    console.log("aa",aa)
-
-
+    // console.log("aa",aa)
     try{
     axios.post('https://testnodeelastic.herokuapp.com/getSearchResult', aa, config)
       .then(function (response) {
@@ -153,8 +167,6 @@ app.get("/on_search", async (req, res) => {
         te = {}
         for (var key in response.data.products) {
           var obj = response.data.products[key];
-          console.log("key", key)
-          console.log("obj", obj.name)
           temp = {
             "id": "1193692_9150538",
             "descriptor": {
@@ -214,6 +226,7 @@ app.get("/on_search", async (req, res) => {
         // console.log(resObj)
         resPayload.message.catalogs = resObj
         // console.log("resPayload",resPayload)
+        resPayload.message.action = "on_search"
         res.send(resPayload)
       });
     }catch(err){
@@ -238,6 +251,7 @@ app.post("/select", async (req, res) => {
     selectedData = req.body
 
     p.then(value => {
+      value.context.action="select"
       res.send(value)
     }).catch(err => {
       console.log(err);
@@ -254,104 +268,116 @@ app.post("/select", async (req, res) => {
 
 
 app.get("/on_select", async (req, res) => {
-  var id = req.params.id;
-  resPayload.context.message_id = Received_msg_id
-  resPayload.context.transaction_id = Received_msg_id
-  console.log("id")
-  console.log('id: ' + req.query.id)
+  try{
+    const queryObject = url.parse(req.url, true).query;
+    console.log("queryObject",queryObject);
+    
 
-  quote = {
-    "provider": {},
-    "fulfilments": [],
-    "quote": {
-      "price" :{},
-      "breakup":[]
+    resPayload.context.message_id = queryObject.messageId
+    resPayload.context.transaction_id = generateGuid()
+    console.log("id")
+    console.log('id: ' + req.query.id)
+  
+    quote = {
+      "provider": {},
+      "fulfilments": [],
+      "quote": {
+        "price" :{},
+        "breakup":[]
+      }
     }
-  }
-  provider = {
-    "id": Math.floor(Math.random() * 899999999 + 100000000)
-  }
-
-  // provoder.id = Math.floor(Math.random() * 899999999 + 100000000)
-
-  fulfillment_details = [
-    {
-      "id": "Fulfillment1",
-      "@ondc/org/awb_no": "",
-      "@ondc/org/provider_name": "Blowhorn",
-      "state": {
-        "descriptor": {
-          "name": "Serviceable"
+    provider = {
+      "id": Math.floor(Math.random() * 899999999 + 100000000)
+    }
+  
+    // provoder.id = Math.floor(Math.random() * 899999999 + 100000000)
+  
+    fulfillment_details = [
+      {
+        "id": "Fulfillment1",
+        "@ondc/org/awb_no": "",
+        "@ondc/org/provider_name": "Blowhorn",
+        "state": {
+          "descriptor": {
+            "name": "Serviceable"
+          }
         }
       }
-    }
-  ]
-
-
-  var finalObj = [   {
-    "@ondc/org/title_type":"tax",
-    "title":"Tax",
-    "price":{
-       "currency":"INR",
-       "value":"0"
-    }
- },
- {
-    "title":"Immediate Delivery",
-    "price":{
-       "currency":"INR",
-       "value":"60.0"
-    }
- },
- {
-    "title":"Convenience Fee",
-    "price":{
-       "currency":"INR",
-       "value":"0"
-    }
- }]
-  var totalPrice = {
-    "currency": "INR",
-    "value": 0
-  }
-
+    ]
   
-  var totalPricetemp = 0
-  for (var key in selectedData) {
-    var obj = selectedData[key];
-
-   
-
-    var mockData = {
-      "@ondc/org/item_quantity": {
-        "count": 1
-      },
-      "@ondc/org/title_type": "item",
-      "title": "",
-      "price": {
-
+  
+    var finalObj = [   {
+      "@ondc/org/title_type":"tax",
+      "title":"Tax",
+      "price":{
+         "currency":"INR",
+         "value":"0"
       }
+   },
+   {
+      "title":"Immediate Delivery",
+      "price":{
+         "currency":"INR",
+         "value":"60.0"
+      }
+   },
+   {
+      "title":"Convenience Fee",
+      "price":{
+         "currency":"INR",
+         "value":"0"
+      }
+   }]
+    var totalPrice = {
+      "currency": "INR",
+      "value": 0
     }
-    mockData["@ondc/org/item_quantity"]["count"] = obj.message.cart.items[0].quantity.count
-
-    mockData["title"] = obj.message.cart.items[0].product.descriptor.name
-
-    mockData["price"] = obj.message.cart.items[0].product.price
-    totalPricetemp = totalPricetemp+obj.message.cart.items[0].product.price.value
-    console.log(">>>>>>>>>>>>>>>>", mockData)
-    finalObj.push(mockData)
-  }
-
-  totalPrice.value = totalPricetemp
   
-  quote.provider = provider
-  quote.fulfilments = fulfillment_details
-  // quote.quote = finalObj
-  quote.quote.price = totalPrice
-  quote.quote.breakup = finalObj
-  resPayload.message.quote = quote
+    
+    var totalPricetemp = 0
+    for (var key in selectedData) {
+      var obj = selectedData[key];
+  
+     
+  
+      var mockData = {
+        "@ondc/org/item_quantity": {
+          "count": 1
+        },
+        "@ondc/org/title_type": "item",
+        "title": "",
+        "price": {
+  
+        }
+      }
+      mockData["@ondc/org/item_quantity"]["count"] = obj.message.cart.items[0].quantity.count
+  
+      mockData["title"] = obj.message.cart.items[0].product.descriptor.name
+  
+      mockData["price"] = obj.message.cart.items[0].product.price
+      totalPricetemp = totalPricetemp+obj.message.cart.items[0].product.price.value
+      console.log(">>>>>>>>>>>>>>>>", mockData)
+      finalObj.push(mockData)
+    }
+  
+    totalPrice.value = totalPricetemp
+    
+    quote.provider = provider
+    quote.fulfilments = fulfillment_details
+    // quote.quote = finalObj
+    quote.quote.price = totalPrice
+    quote.quote.breakup = finalObj
+    resPayload.message.quote = quote
+    resPayload.context.action="on_select"
+    res.send(resPayload);
 
-  res.send(resPayload);
+  }catch(err){
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+ 
 })
 
 app.post("/init", async (req,res)=>{
@@ -361,6 +387,7 @@ app.post("/init", async (req,res)=>{
     selectedData = req.body
 
     p.then(value => {
+      value.context.action="init"
       res.send(value)
     }).catch(err => {
       console.log(err);
@@ -386,9 +413,12 @@ app.get("/on_init", async (req,res)=>{
   //         }
   //     }
   // );
+  const queryObject = url.parse(req.url, true).query;
+  console.log("queryObject",queryObject);
+  
 
-  resPayload.context.message_id = Received_msg_id
-  resPayload.context.transaction_id = Received_msg_id
+  resPayload.context.message_id = queryObject.messageId
+  resPayload.context.transaction_id = generateGuid()
 
   
     orderDetails = {
@@ -413,13 +443,15 @@ app.get("/on_init", async (req,res)=>{
     // res.send(obj);
     orderDetails.items = obj.message.items
     orderDetails.billing = obj.message.billing_info
+    orderDetails.fulfillments = obj.message.delivery_info
     orderDetails.payment = obj.message.payment
 
+    resPayload.message.order = orderDetails
+    resPayload.context.action="on_init"
+    res.send(resPayload);
   }
-  resPayload.message.order = orderDetails
 
 
-   res.send(resPayload);
 
   } catch (err) {
     console.log(err);
@@ -527,7 +559,77 @@ app.get("/delivey_address",async (req,res)=>{
   }
 })
 
+app.post("/confirm", async (req,res)=>{
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = req.body
 
+    p.then(value => {
+      value.context.action="confirm"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_confirm", async (req,res)=>{
+  try {
+
+  resPayload.context.message_id = Received_msg_id
+  resPayload.context.transaction_id = generateGuid()
+
+  
+    orderDetails = {
+      "id": Math.floor(Math.random() * 899999999 + 100000000),
+      "state" : "Active",
+      "provider":{
+        "id":Math.floor(Math.random() * 899999999 + 100000000),
+        "locations":[
+           {
+              "id":Math.floor(Math.random() * 899999999 + 100000000)
+           }
+        ]
+     },
+      "items":[],
+      "billing":{},
+      "fulfillments":[],
+      "quote":{},
+      "payment":{},
+      "created_at":datetime,
+      "updated_at":datetime
+   }
+   for (var key in selectedData) {
+    var obj = selectedData[key];
+
+    console.log("ssssdfsdsads",obj)
+    // res.send(obj);
+    orderDetails.items = obj.message.items
+    orderDetails.billing = obj.message.billing_info
+    orderDetails.fulfillments = obj.message.delivery_info
+    orderDetails.payment = obj.message.payment
+
+    resPayload.message.order = orderDetails
+    res.send(resPayload);
+  }
+
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
 
 app.listen(process.env.PORT || port, () => console.log(`Example app listening at http://localhost:${port}`));
 
