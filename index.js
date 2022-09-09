@@ -64,23 +64,7 @@ var datetime = currentdate.getDate() + "-"
   + currentdate.getMinutes() + ":"
   + currentdate.getSeconds() + "Z";
 
-let resPayload = {
-  "context": {
-    "domain": "nic2004:52110",
-    "country": "IND",
-    "city": "std:080",
-    "action": "search",
-    "core_version": "1.0.0",
-    "bap_id": "sizeguarantee.com",
-    "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
-    "transaction_id": "",
-    "message_id": "",
-    "timestamp": datetime
-  },
-  "message": {
 
-  }
-}
 var aa = {
   "platform": [],
   "brand": [],
@@ -118,7 +102,7 @@ app.post("/search", async (req, res) => {
   try {
 
     let data = SendRabbitMq({ data: req.body })
-
+    selectedDataObj = {}
     selectedDataObj = req.body
 
     const p = Promise.resolve(data);
@@ -146,7 +130,23 @@ app.post("/search", async (req, res) => {
 app.get("/on_search", async (req, res) => {
   try {
 
-
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
     const queryObject = url.parse(req.url, true).query;
     console.log("queryObject", queryObject);
 
@@ -232,7 +232,7 @@ app.get("/on_search", async (req, res) => {
           // console.log(resObj)
           resPayload.message.catalogs = resObj
           // console.log("resPayload",resPayload)
-          resPayload.message.action = "on_search"
+          resPayload.context.action = "on_search"
           res.send(resPayload)
         });
     } catch (err) {
@@ -254,6 +254,7 @@ app.post("/select", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
+
     selectedData = []
     selectedData = req.body
 
@@ -276,6 +277,24 @@ app.post("/select", async (req, res) => {
 
 app.get("/on_select", async (req, res) => {
   try {
+
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
     const queryObject = url.parse(req.url, true).query;
     console.log("queryObject", queryObject);
 
@@ -410,6 +429,23 @@ app.post("/init", async (req, res) => {
 
 app.get("/on_init", async (req, res) => {
   try {
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
     //   console.log("====>")
     //   request.post(
     //     'https://testnodeelastic.herokuapp.com/getSearchResult',
@@ -517,7 +553,7 @@ app.get("/billing_address", async (req, res) => {
     });
   }
 })
-app.get("/delivey_address", async (req, res) => {
+app.get("/delivery_address", async (req, res) => {
   try {
 
     var billing_address = [
@@ -570,6 +606,7 @@ app.post("/confirm", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
+    selectedData = []
     selectedData = req.body
 
     p.then(value => {
@@ -586,11 +623,77 @@ app.post("/confirm", async (req, res) => {
     });
   }
 })
+app.get("/on_confirm", async (req,res)=>{
+  try {
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
+  resPayload.context.message_id = Received_msg_id
+  resPayload.context.transaction_id = generateGuid()
 
+
+    orderDetails = {
+      "id": Math.floor(Math.random() * 899999999 + 100000000),
+      "state" : "Active",
+      "provider":{
+        "id":Math.floor(Math.random() * 899999999 + 100000000),
+        "locations":[
+           {
+              "id":Math.floor(Math.random() * 899999999 + 100000000)
+           }
+        ]
+     },
+      "items":[],
+      "billing":{},
+      "fulfillments":[],
+      "quote":{},
+      "payment":{},
+      "created_at":datetime,
+      "updated_at":datetime
+   }
+   for (var key in selectedData) {
+    var obj = selectedData[key];
+
+    console.log("ssssdfsdsads",obj)
+    // res.send(obj);
+    orderDetails.items = obj.message.items
+    orderDetails.billing = obj.message.billing_info
+    orderDetails.fulfillments = obj.message.delivery_info
+    orderDetails.payment = obj.message.payment
+
+    resPayload.message.order = orderDetails
+    res.send(resPayload);
+  }
+
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
 app.post("/status", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
+    selectedData = []
     selectedData = req.body
 
     p.then(value => {
@@ -612,7 +715,23 @@ app.post("/status", async (req, res) => {
 
 app.get("/on_status", async (req, res) => {
   try {
-
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
     resPayload.context.message_id = Received_msg_id
     resPayload.context.transaction_id = generateGuid()
 
@@ -666,6 +785,7 @@ app.post("/track", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
+    selectedData = []
     selectedData = req.body
 
     p.then(value => {
@@ -687,7 +807,23 @@ app.post("/track", async (req, res) => {
 
 app.get("/on_track", async (req, res) => {
   try {
-
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
     resPayload.context.message_id = Received_msg_id
     resPayload.context.transaction_id = generateGuid()
 
