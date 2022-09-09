@@ -182,6 +182,12 @@ app.get("/on_search", async (req, res) => {
               },
               "location_id": "9150538",
               "@ondc/org/time_to_ship": "PT10M",
+              "@ondc/org/returnable":"false",
+              "@ondc/org/cancellable":"false",
+              "@ondc/org/return_window":"",
+              "@ondc/org/seller_pickup_return":"false",
+              "@ondc/org/time_to_ship":"PT45M",
+              "@ondc/org/available_on_cod":"false",
               "provider_details": {
                 "id": "9150538",
                 "descriptor": {
@@ -248,6 +254,7 @@ app.post("/select", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
+    selectedData = []
     selectedData = req.body
 
     p.then(value => {
@@ -384,7 +391,7 @@ app.post("/init", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
-    selectedData = req.body
+    selectedDataObj = req.body
 
     p.then(value => {
       value.context.action = "init"
@@ -436,20 +443,20 @@ app.get("/on_init", async (req, res) => {
       "quote": {},
       "payment": {}
     }
-    for (var key in selectedData) {
-      var obj = selectedData[key];
+    // for (var key in selectedDataObj) {
+    //   var obj = selectedDataObj[key];
 
-      console.log("ssssdfsdsads", obj)
+      // console.log( obj)
       // res.send(obj);
-      orderDetails.items = obj.message.items
-      orderDetails.billing = obj.message.billing_info
-      orderDetails.fulfillments = obj.message.delivery_info
-      orderDetails.payment = obj.message.payment
+      orderDetails.items = selectedDataObj.message.items
+      orderDetails.billing = selectedDataObj.message.billing_info
+      orderDetails.fulfillments = selectedDataObj.message.delivery_info
+      orderDetails.payment = selectedDataObj.message.payment
 
       resPayload.message.order = orderDetails
       resPayload.context.action = "on_init"
       res.send(resPayload);
-    }
+    
 
 
 
@@ -686,7 +693,7 @@ app.get("/on_track", async (req, res) => {
 
     var track = {
      
-        "url": "https://track.bpp.com?order_id=0f8c1e68-c041-427d-9ef4-d4d3e5b22ef9",
+        "url": "https://track.bpp.com?order_id="+Received_msg_id,
         "status": "active"
       
     }
