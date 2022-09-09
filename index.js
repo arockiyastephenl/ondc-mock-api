@@ -102,10 +102,10 @@ function generateGuid() {
   var result, i, j;
   result = '';
   for (j = 0; j < 32; j++) {
-      if (j == 8 || j == 12 || j == 16 || j == 20)
-          result = result + '-';
-      i = Math.floor(Math.random() * 16).toString(16).toUpperCase();
-      result = result + i;
+    if (j == 8 || j == 12 || j == 16 || j == 20)
+      result = result + '-';
+    i = Math.floor(Math.random() * 16).toString(16).toUpperCase();
+    result = result + i;
   }
   return result;
 }
@@ -146,90 +146,90 @@ app.post("/search", async (req, res) => {
 app.get("/on_search", async (req, res) => {
   try {
 
-    
+
     const queryObject = url.parse(req.url, true).query;
-    console.log("queryObject",queryObject);
-    
+    console.log("queryObject", queryObject);
+
 
     resPayload.context.message_id = queryObject.messageId
     resPayload.context.transaction_id = Received_msg_id
     resPayload.context.timestamp = datetime
 
 
-    aa.search =selectedDataObj.message.criteria.search_string
+    aa.search = selectedDataObj.message.criteria.search_string
     // console.log("aa",aa)
-    try{
-    axios.post('https://testnodeelastic.herokuapp.com/getSearchResult', aa, config)
-      .then(function (response) {
-        products = response.data.products
-        var resObj = []
+    try {
+      axios.post('https://testnodeelastic.herokuapp.com/getSearchResult', aa, config)
+        .then(function (response) {
+          products = response.data.products
+          var resObj = []
 
-        te = {}
-        for (var key in response.data.products) {
-          var obj = response.data.products[key];
-          temp = {
-            "id": "1193692_9150538",
-            "descriptor": {
-              "name": "Dates Milk",
-              "symbol": "http://lh3.googleusercontent.com/59XJAPWHZBhrwGAu-pHVXNRuA3416MGAia7LiCsSOL014c_eyLoSb-JDc_VWXOM7hnqiEANwwyneEOPtxJsnSo2Yo7WZhlD00iACCHF7",
-              "images": [
-                "http://lh3.googleusercontent.com/59XJAPWHZBhrwGAu-pHVXNRuA3416MGAia7LiCsSOL014c_eyLoSb-JDc_VWXOM7hnqiEANwwyneEOPtxJsnSo2Yo7WZhlD00iACCHF7"
-              ]
-            },
-            "price": {
-              "currency": "INR",
-              "value": 125
-            },
-            "location_id": "9150538",
-            "@ondc/org/time_to_ship": "PT10M",
-            "provider_details": {
-              "id": "9150538",
+          te = {}
+          for (var key in response.data.products) {
+            var obj = response.data.products[key];
+            temp = {
+              "id": "1193692_9150538",
               "descriptor": {
-                "name": "Chaicup",
-                "symbol": "http://lh3.googleusercontent.com/Tr3Z-FifnP4u80QelAI06F42O-V-_3fQd2uFF9ICqKX9DXWBhSwXMv-FsK_ff8ilCOdDy9rtCKIZ6DkMaEHY2_17wUU",
+                "name": "Dates Milk",
+                "symbol": "http://lh3.googleusercontent.com/59XJAPWHZBhrwGAu-pHVXNRuA3416MGAia7LiCsSOL014c_eyLoSb-JDc_VWXOM7hnqiEANwwyneEOPtxJsnSo2Yo7WZhlD00iACCHF7",
                 "images": [
-                  "http://lh3.googleusercontent.com/Tr3Z-FifnP4u80QelAI06F42O-V-_3fQd2uFF9ICqKX9DXWBhSwXMv-FsK_ff8ilCOdDy9rtCKIZ6DkMaEHY2_17wUU"
+                  "http://lh3.googleusercontent.com/59XJAPWHZBhrwGAu-pHVXNRuA3416MGAia7LiCsSOL014c_eyLoSb-JDc_VWXOM7hnqiEANwwyneEOPtxJsnSo2Yo7WZhlD00iACCHF7"
                 ]
-              }
-            },
-            "location_details": {
-              "id": "9150538",
-              "gps": "13.06696502,80.26705667",
-              "address": {
-                "name": "Chaicup",
-                "locality": "Egmore",
-                "city": "Chennai",
-                "country": "India"
-              }
-            },
-            "category_details": {
+              },
+              "price": {
+                "currency": "INR",
+                "value": 125
+              },
+              "location_id": "9150538",
+              "@ondc/org/time_to_ship": "PT10M",
+              "provider_details": {
+                "id": "9150538",
+                "descriptor": {
+                  "name": "Chaicup",
+                  "symbol": "http://lh3.googleusercontent.com/Tr3Z-FifnP4u80QelAI06F42O-V-_3fQd2uFF9ICqKX9DXWBhSwXMv-FsK_ff8ilCOdDy9rtCKIZ6DkMaEHY2_17wUU",
+                  "images": [
+                    "http://lh3.googleusercontent.com/Tr3Z-FifnP4u80QelAI06F42O-V-_3fQd2uFF9ICqKX9DXWBhSwXMv-FsK_ff8ilCOdDy9rtCKIZ6DkMaEHY2_17wUU"
+                  ]
+                }
+              },
+              "location_details": {
+                "id": "9150538",
+                "gps": "13.06696502,80.26705667",
+                "address": {
+                  "name": "Chaicup",
+                  "locality": "Egmore",
+                  "city": "Chennai",
+                  "country": "India"
+                }
+              },
+              "category_details": {
 
-            },
-            "fulfillment_details": {
+              },
+              "fulfillment_details": {
 
-            },
-            "bpp_details": {
-              "name": "MAGICPIN",
-              "symbol": "https://static.magicpin.com/samara/static/images/home/about-us/magicpin-logo.svg",
-              "short_desc": "#ShopLocal",
-              "bpp_id": "ultrontest.magicpin.com/oms_partner/ondc"
+              },
+              "bpp_details": {
+                "name": "MAGICPIN",
+                "symbol": "https://static.magicpin.com/samara/static/images/home/about-us/magicpin-logo.svg",
+                "short_desc": "#ShopLocal",
+                "bpp_id": "ultrontest.magicpin.com/oms_partner/ondc"
+              }
             }
+            var number = Math.floor(Math.random() * 899999999 + 100000000)
+            console.log(number)
+            temp.descriptor.name = obj.name
+            temp.descriptor.images = obj.imageUrl
+            temp["price"]["value"] = obj.price.values
+            temp["id"] = number.toString()
+            resObj.push(temp)
           }
-          var number = Math.floor(Math.random() * 899999999 + 100000000)
-          console.log(number)
-          temp.descriptor.name = obj.name
-          temp.descriptor.images = obj.imageUrl
-          temp["price"]["value"] = obj.price.values
-          temp["id"] = number.toString()
-          resObj.push(temp)
-        }
-        // console.log(resObj)
-        resPayload.message.catalogs = resObj
-        // console.log("resPayload",resPayload)
-        resPayload.message.action = "on_search"
-        res.send(resPayload)
-      });
-    }catch(err){
+          // console.log(resObj)
+          resPayload.message.catalogs = resObj
+          // console.log("resPayload",resPayload)
+          resPayload.message.action = "on_search"
+          res.send(resPayload)
+        });
+    } catch (err) {
       res.status(400).json({
         error: true,
         message: err,
@@ -251,7 +251,7 @@ app.post("/select", async (req, res) => {
     selectedData = req.body
 
     p.then(value => {
-      value.context.action="select"
+      value.context.action = "select"
       res.send(value)
     }).catch(err => {
       console.log(err);
@@ -268,30 +268,30 @@ app.post("/select", async (req, res) => {
 
 
 app.get("/on_select", async (req, res) => {
-  try{
+  try {
     const queryObject = url.parse(req.url, true).query;
-    console.log("queryObject",queryObject);
-    
+    console.log("queryObject", queryObject);
+
 
     resPayload.context.message_id = queryObject.messageId
     resPayload.context.transaction_id = generateGuid()
     console.log("id")
     console.log('id: ' + req.query.id)
-  
+
     quote = {
       "provider": {},
       "fulfilments": [],
       "quote": {
-        "price" :{},
-        "breakup":[]
+        "price": {},
+        "breakup": []
       }
     }
     provider = {
       "id": Math.floor(Math.random() * 899999999 + 100000000)
     }
-  
+
     // provoder.id = Math.floor(Math.random() * 899999999 + 100000000)
-  
+
     fulfillment_details = [
       {
         "id": "Fulfillment1",
@@ -304,42 +304,42 @@ app.get("/on_select", async (req, res) => {
         }
       }
     ]
-  
-  
-    var finalObj = [   {
-      "@ondc/org/title_type":"tax",
-      "title":"Tax",
-      "price":{
-         "currency":"INR",
-         "value":"0"
+
+
+    var finalObj = [{
+      "@ondc/org/title_type": "tax",
+      "title": "Tax",
+      "price": {
+        "currency": "INR",
+        "value": "0"
       }
-   },
-   {
-      "title":"Immediate Delivery",
-      "price":{
-         "currency":"INR",
-         "value":"60.0"
+    },
+    {
+      "title": "Immediate Delivery",
+      "price": {
+        "currency": "INR",
+        "value": "60.0"
       }
-   },
-   {
-      "title":"Convenience Fee",
-      "price":{
-         "currency":"INR",
-         "value":"0"
+    },
+    {
+      "title": "Convenience Fee",
+      "price": {
+        "currency": "INR",
+        "value": "0"
       }
-   }]
+    }]
     var totalPrice = {
       "currency": "INR",
       "value": 0
     }
-  
-    
+
+
     var totalPricetemp = 0
     for (var key in selectedData) {
       var obj = selectedData[key];
-  
-     
-  
+
+
+
       var mockData = {
         "@ondc/org/item_quantity": {
           "count": 1
@@ -347,47 +347,47 @@ app.get("/on_select", async (req, res) => {
         "@ondc/org/title_type": "item",
         "title": "",
         "price": {
-  
+
         }
       }
       mockData["@ondc/org/item_quantity"]["count"] = obj.message.cart.items[0].quantity.count
-  
+
       mockData["title"] = obj.message.cart.items[0].product.descriptor.name
-  
+
       mockData["price"] = obj.message.cart.items[0].product.price
-      totalPricetemp = totalPricetemp+obj.message.cart.items[0].product.price.value
+      totalPricetemp = totalPricetemp + obj.message.cart.items[0].product.price.value
       console.log(">>>>>>>>>>>>>>>>", mockData)
       finalObj.push(mockData)
     }
-  
+
     totalPrice.value = totalPricetemp
-    
+
     quote.provider = provider
     quote.fulfilments = fulfillment_details
     // quote.quote = finalObj
     quote.quote.price = totalPrice
     quote.quote.breakup = finalObj
     resPayload.message.quote = quote
-    resPayload.context.action="on_select"
+    resPayload.context.action = "on_select"
     res.send(resPayload);
 
-  }catch(err){
+  } catch (err) {
     res.status(400).json({
       error: true,
       message: err,
     });
   }
- 
+
 })
 
-app.post("/init", async (req,res)=>{
+app.post("/init", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
     selectedData = req.body
 
     p.then(value => {
-      value.context.action="init"
+      value.context.action = "init"
       res.send(value)
     }).catch(err => {
       console.log(err);
@@ -401,55 +401,55 @@ app.post("/init", async (req,res)=>{
   }
 })
 
-app.get("/on_init", async (req,res)=>{
+app.get("/on_init", async (req, res) => {
   try {
-  //   console.log("====>")
-  //   request.post(
-  //     'https://testnodeelastic.herokuapp.com/getSearchResult',
-  //     aa,
-  //     function (error, response, body) {
-  //         if (!error && response.statusCode == 200) {
-  //             console.log(body);
-  //         }
-  //     }
-  // );
-  const queryObject = url.parse(req.url, true).query;
-  console.log("queryObject",queryObject);
-  
+    //   console.log("====>")
+    //   request.post(
+    //     'https://testnodeelastic.herokuapp.com/getSearchResult',
+    //     aa,
+    //     function (error, response, body) {
+    //         if (!error && response.statusCode == 200) {
+    //             console.log(body);
+    //         }
+    //     }
+    // );
+    const queryObject = url.parse(req.url, true).query;
+    console.log("queryObject", queryObject);
 
-  resPayload.context.message_id = queryObject.messageId
-  resPayload.context.transaction_id = generateGuid()
 
-  
+    resPayload.context.message_id = queryObject.messageId
+    resPayload.context.transaction_id = generateGuid()
+
+
     orderDetails = {
-      "provider":{
-        "id":Math.floor(Math.random() * 899999999 + 100000000),
-        "locations":[
-           {
-              "id":Math.floor(Math.random() * 899999999 + 100000000)
-           }
+      "provider": {
+        "id": Math.floor(Math.random() * 899999999 + 100000000),
+        "locations": [
+          {
+            "id": Math.floor(Math.random() * 899999999 + 100000000)
+          }
         ]
-     },
-      "items":[],
-      "billing":{},
-      "fulfillments":[],
-      "quote":{},
-      "payment":{}
-   }
-   for (var key in selectedData) {
-    var obj = selectedData[key];
+      },
+      "items": [],
+      "billing": {},
+      "fulfillments": [],
+      "quote": {},
+      "payment": {}
+    }
+    for (var key in selectedData) {
+      var obj = selectedData[key];
 
-    console.log("ssssdfsdsads",obj)
-    // res.send(obj);
-    orderDetails.items = obj.message.items
-    orderDetails.billing = obj.message.billing_info
-    orderDetails.fulfillments = obj.message.delivery_info
-    orderDetails.payment = obj.message.payment
+      console.log("ssssdfsdsads", obj)
+      // res.send(obj);
+      orderDetails.items = obj.message.items
+      orderDetails.billing = obj.message.billing_info
+      orderDetails.fulfillments = obj.message.delivery_info
+      orderDetails.payment = obj.message.payment
 
-    resPayload.message.order = orderDetails
-    resPayload.context.action="on_init"
-    res.send(resPayload);
-  }
+      resPayload.message.order = orderDetails
+      resPayload.context.action = "on_init"
+      res.send(resPayload);
+    }
 
 
 
@@ -462,47 +462,47 @@ app.get("/on_init", async (req,res)=>{
   }
 })
 
-app.get("/billing_address",async (req,res)=>{
-  try{
+app.get("/billing_address", async (req, res) => {
+  try {
 
     var billing_address = [
       {
-          "_id": "6316c481a300896b927a3922",
-          "userId": "3E4SH92EURhowc1GN181RK9HCWi2",
-          "id": "ac858fed-85a0-4808-89c8-892f2e87a514",
-          "descriptor": {
-              "name": "dummy name",
-              "phone": "123456789",
-              "email": "dummy@gmail.com",
-              "code": null,
-              "symbol": null,
-              "shortDesc": null,
-              "longDesc": null,
-              "images": [],
-              "audio": null,
-              "3d_render": null
-          },
-          "gps": null,
-          "defaultAddress": true,
-          "address": {
-              "door": "xxx",
-              "name": null,
-              "building": "xxx",
-              "street": "dummy street",
-              "locality": null,
-              "ward": null,
-              "city": "chennai District",
-              "state": "Tamil Nadu",
-              "country": "IND",
-              "areaCode": "600000"
-          },
-          "createdAt": datetime,
-          "updatedAt": datetime,
-          "__v": 0
+        "_id": "6316c481a300896b927a3922",
+        "userId": "3E4SH92EURhowc1GN181RK9HCWi2",
+        "id": "ac858fed-85a0-4808-89c8-892f2e87a514",
+        "descriptor": {
+          "name": "dummy name",
+          "phone": "123456789",
+          "email": "dummy@gmail.com",
+          "code": null,
+          "symbol": null,
+          "shortDesc": null,
+          "longDesc": null,
+          "images": [],
+          "audio": null,
+          "3d_render": null
+        },
+        "gps": null,
+        "defaultAddress": true,
+        "address": {
+          "door": "xxx",
+          "name": null,
+          "building": "xxx",
+          "street": "dummy street",
+          "locality": null,
+          "ward": null,
+          "city": "chennai District",
+          "state": "Tamil Nadu",
+          "country": "IND",
+          "areaCode": "600000"
+        },
+        "createdAt": datetime,
+        "updatedAt": datetime,
+        "__v": 0
       }
-  ]
+    ]
     res.send(billing_address)
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       error: true,
@@ -510,47 +510,47 @@ app.get("/billing_address",async (req,res)=>{
     });
   }
 })
-app.get("/delivey_address",async (req,res)=>{
-  try{
+app.get("/delivey_address", async (req, res) => {
+  try {
 
     var billing_address = [
       {
-          "_id": "6316c481a300896b927a3922",
-          "userId": "3E4SH92EURhowc1GN181RK9HCWi2",
-          "id": "ac858fed-85a0-4808-89c8-892f2e87a514",
-          "descriptor": {
-              "name": "dummy name",
-              "phone": "123456789",
-              "email": "dummy@gmail.com",
-              "code": null,
-              "symbol": null,
-              "shortDesc": null,
-              "longDesc": null,
-              "images": [],
-              "audio": null,
-              "3d_render": null
-          },
-          "gps": null,
-          "defaultAddress": true,
-          "address": {
-              "door": "xxx",
-              "name": null,
-              "building": "xxx",
-              "street": "dummy street",
-              "locality": null,
-              "ward": null,
-              "city": "chennai District",
-              "state": "Tamil Nadu",
-              "country": "IND",
-              "areaCode": "600000"
-          },
-          "createdAt": datetime,
-          "updatedAt": datetime,
-          "__v": 0
+        "_id": "6316c481a300896b927a3922",
+        "userId": "3E4SH92EURhowc1GN181RK9HCWi2",
+        "id": "ac858fed-85a0-4808-89c8-892f2e87a514",
+        "descriptor": {
+          "name": "dummy name",
+          "phone": "123456789",
+          "email": "dummy@gmail.com",
+          "code": null,
+          "symbol": null,
+          "shortDesc": null,
+          "longDesc": null,
+          "images": [],
+          "audio": null,
+          "3d_render": null
+        },
+        "gps": null,
+        "defaultAddress": true,
+        "address": {
+          "door": "xxx",
+          "name": null,
+          "building": "xxx",
+          "street": "dummy street",
+          "locality": null,
+          "ward": null,
+          "city": "chennai District",
+          "state": "Tamil Nadu",
+          "country": "IND",
+          "areaCode": "600000"
+        },
+        "createdAt": datetime,
+        "updatedAt": datetime,
+        "__v": 0
       }
-  ]
+    ]
     res.send(billing_address)
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.status(400).json({
       error: true,
@@ -559,14 +559,14 @@ app.get("/delivey_address",async (req,res)=>{
   }
 })
 
-app.post("/confirm", async (req,res)=>{
+app.post("/confirm", async (req, res) => {
   try {
     let data = SendRabbitMq({ data: req.body })
     const p = Promise.resolve(data);
     selectedData = req.body
 
     p.then(value => {
-      value.context.action="confirm"
+      value.context.action = "confirm"
       res.send(value)
     }).catch(err => {
       console.log(err);
@@ -580,45 +580,121 @@ app.post("/confirm", async (req,res)=>{
   }
 })
 
-app.get("/on_confirm", async (req,res)=>{
+app.post("/status", async (req, res) => {
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = req.body
+
+    p.then(value => {
+      value.message.orderId = generateGuid()
+      Received_msg_id = value.message.orderId
+      value.context.action = "status"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_status", async (req, res) => {
   try {
 
-  resPayload.context.message_id = Received_msg_id
-  resPayload.context.transaction_id = generateGuid()
+    resPayload.context.message_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
 
-  
+
     orderDetails = {
-      "id": Math.floor(Math.random() * 899999999 + 100000000),
-      "state" : "Active",
-      "provider":{
-        "id":Math.floor(Math.random() * 899999999 + 100000000),
-        "locations":[
-           {
-              "id":Math.floor(Math.random() * 899999999 + 100000000)
-           }
+      "id": Received_msg_id,
+      "state": "Active",
+      "provider": {
+        "id": Math.floor(Math.random() * 899999999 + 100000000),
+        "locations": [
+          {
+            "id": Math.floor(Math.random() * 899999999 + 100000000)
+          }
         ]
-     },
-      "items":[],
-      "billing":{},
-      "fulfillments":[],
-      "quote":{},
-      "payment":{},
-      "created_at":datetime,
-      "updated_at":datetime
-   }
-   for (var key in selectedData) {
-    var obj = selectedData[key];
+      },
+      "items": [],
+      "billing": {},
+      "fulfillments": [],
+      "quote": {},
+      "payment": {},
+      "created_at": datetime,
+      "updated_at": datetime
+    }
+    for (var key in selectedData) {
+      var obj = selectedData[key];
 
-    console.log("ssssdfsdsads",obj)
-    // res.send(obj);
-    orderDetails.items = obj.message.items
-    orderDetails.billing = obj.message.billing_info
-    orderDetails.fulfillments = obj.message.delivery_info
-    orderDetails.payment = obj.message.payment
+      console.log("ssssdfsdsads", obj)
+      // res.send(obj);
+      orderDetails.items = obj.message.items
+      orderDetails.billing = obj.message.billing_info
+      orderDetails.fulfillments = obj.message.delivery_info
+      orderDetails.payment = obj.message.payment
 
-    resPayload.message.order = orderDetails
-    res.send(resPayload);
+      resPayload.message.order = orderDetails
+      resPayload.context.action = "on_status"
+      res.send(resPayload);
+    }
+
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
   }
+})
+
+app.post("/track", async (req, res) => {
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = req.body
+
+    p.then(value => {
+      value.message.orderId = generateGuid()
+      Received_msg_id = value.message.orderId
+      value.context.action = "track"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_track", async (req, res) => {
+  try {
+
+    resPayload.context.message_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
+
+    var track = {
+     
+        "url": "https://track.bpp.com?order_id=0f8c1e68-c041-427d-9ef4-d4d3e5b22ef9",
+        "status": "active"
+      
+    }
+
+    resPayload.message.tracking = track
+
+    res.send(resPayload);
+
 
 
 
