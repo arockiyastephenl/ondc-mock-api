@@ -1107,8 +1107,8 @@ app.post("/support", async (req, res) => {
     selectedData = req.body
 
     p.then(value => {
-      value.message.orderId = generateGuid()
-      Received_msg_id = value.message.orderId
+      value.message.ref_id = generateGuid()
+      Received_msg_id = value.message.ref_id
       value.context.action = "support"
       res.send(value)
     }).catch(err => {
