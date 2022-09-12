@@ -152,7 +152,7 @@ app.get("/on_search", async (req, res) => {
 
 
     resPayload.context.message_id = queryObject.messageId
-    resPayload.context.transaction_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
     resPayload.context.timestamp = datetime
 
 
@@ -832,6 +832,322 @@ app.get("/on_track", async (req, res) => {
         "url": "https://track.bpp.com?order_id="+Received_msg_id,
         "status": "active"
       
+    }
+
+    resPayload.message.tracking = track
+
+    res.send(resPayload);
+
+
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.post("/cancel", async (req, res) => {
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = []
+    selectedData = req.body
+
+    p.then(value => {
+      value.message.orderId = generateGuid()
+      value.message.cancellation_reason_id = generateGuid()
+      Received_msg_id = value.message.orderId
+      value.context.action = "cancel"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_cancel", async (req, res) => {
+  try {
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
+    resPayload.context.message_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
+
+
+    orderDetails = {
+      "id": Received_msg_id,
+      "state": "Cancelled",
+      "provider": {
+        "id": Math.floor(Math.random() * 899999999 + 100000000),
+        "locations": [
+          {
+            "id": Math.floor(Math.random() * 899999999 + 100000000)
+          }
+        ]
+      },
+      "items": [],
+      "billing": {},
+      "fulfillments": [],
+      "quote": {},
+      "payment": {},
+      "created_at": datetime,
+      "updated_at": datetime
+    }
+    for (var key in selectedData) {
+      var obj = selectedData[key];
+
+      console.log("ssssdfsdsads", obj)
+      // res.send(obj);
+      orderDetails.items = obj.message.items
+      orderDetails.billing = obj.message.billing_info
+      orderDetails.fulfillments = obj.message.delivery_info
+      orderDetails.payment = obj.message.payment
+
+      resPayload.message.order = orderDetails
+      resPayload.context.action = "on_status"
+      res.send(resPayload);
+    }
+
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+
+app.post("/update", async (req, res) => {
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = []
+    selectedData = req.body
+
+    p.then(value => {
+      // value.message.orderId = generateGuid()
+      // value.message.cancellation_reason_id = generateGuid()
+      Received_msg_id = value.message.orderId
+      value.context.action = "update"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_update", async (req, res) => {
+  try {
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
+    resPayload.context.message_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
+
+
+    orderDetails = {
+      "id": Received_msg_id,
+      "provider": {
+        "id": Math.floor(Math.random() * 899999999 + 100000000).toLocaleString(),
+        "locations": [
+          {
+            "id": Math.floor(Math.random() * 899999999 + 100000000).toLocaleString()
+          }
+        ]
+      },
+      "items": [],
+      "billing": {},
+      "fulfillments": [],
+      "quote": {},
+      "payment": {},
+      "created_at": datetime,
+      "updated_at": datetime
+    }
+    for (var key in selectedData) {
+      var obj = selectedData[key];
+
+      console.log("ssssdfsdsads", obj)
+      // res.send(obj);
+      orderDetails.items = obj.message.items
+      orderDetails.billing = obj.message.billing_info
+      orderDetails.fulfillments = obj.message.delivery_info
+      orderDetails.payment = obj.message.payment
+
+      resPayload.message.update_target = "items"
+      resPayload.message.order = orderDetails
+      resPayload.context.action = "on_update"
+      res.send(resPayload);
+    }
+
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.post("/rating", async (req, res) => {
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = []
+    selectedData = req.body
+
+    p.then(value => {
+      value.message.rating_category = "item"
+      value.message.id = value.context.message_id
+      value.message.value = "4"
+      Received_msg_id = value.context.message_id
+      value.context.action = "rating"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_rating", async (req, res) => {
+  try {
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
+    resPayload.context.message_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
+
+    resPayload.message.feedback_ack = "true"
+    resPayload.message.rating_ack = "true"
+    res.send(resPayload);
+
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.post("/support", async (req, res) => {
+  try {
+    let data = SendRabbitMq({ data: req.body })
+    const p = Promise.resolve(data);
+    selectedData = []
+    selectedData = req.body
+
+    p.then(value => {
+      value.message.orderId = generateGuid()
+      Received_msg_id = value.message.orderId
+      value.context.action = "support"
+      res.send(value)
+    }).catch(err => {
+      console.log(err);
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      error: true,
+      message: err,
+    });
+  }
+})
+
+app.get("/on_support", async (req, res) => {
+  try {
+    let resPayload = {
+      "context": {
+        "domain": "nic2004:52110",
+        "country": "IND",
+        "city": "std:080",
+        "action": "search",
+        "core_version": "1.0.0",
+        "bap_id": "sizeguarantee.com",
+        "bap_uri": "https://sizeguarantee-app.org/protocol/v1",
+        "transaction_id": "",
+        "message_id": "",
+        "timestamp": datetime
+      },
+      "message": {
+    
+      }
+    }
+    resPayload.context.message_id = Received_msg_id
+    resPayload.context.transaction_id = generateGuid()
+
+    var track = {
+     
+        "url": "http://support.bpp.com?order_id="+Received_msg_id  
     }
 
     resPayload.message.tracking = track
