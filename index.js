@@ -184,7 +184,7 @@ app.get("/on_search", async (req, res) => {
               "@ondc/org/time_to_ship": "PT10M",
               "@ondc/org/returnable":"false",
               "@ondc/org/cancellable":"false",
-              "@ondc/org/return_window":"",
+              "@ondc/org/return_window":"false",
               "@ondc/org/seller_pickup_return":"false",
               "@ondc/org/time_to_ship":"PT45M",
               "@ondc/org/available_on_cod":"false",
@@ -227,7 +227,7 @@ app.get("/on_search", async (req, res) => {
             temp.descriptor.images = obj.imageUrl
             temp["price"]["value"] = obj.price.values
             temp["id"] = number.toString()
-            temp.provider_details.address.name = obj.brand.name
+            temp.provider_details.descriptor.name = obj.brand.name
             resObj.push(temp)
           }
           // console.log(resObj)
