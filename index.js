@@ -227,6 +227,7 @@ app.get("/on_search", async (req, res) => {
             temp.descriptor.images = obj.imageUrl
             temp["price"]["value"] = obj.price.values
             temp["id"] = number.toString()
+            temp.provider_details.address.name = obj.brand.name
             resObj.push(temp)
           }
           // console.log(resObj)
